@@ -80,10 +80,10 @@ function createCrossword(data)
 		
 		filledIn.push(temp);
 	}
-	
-			
+		
 	var html = "";
 	
+	html += '<div style="float: right">'
 	html+='<table cellspacing="0" id="crossword">'
 	
 	for(i = 0;i<height;i++)
@@ -94,10 +94,10 @@ function createCrossword(data)
 		{
 			var num = width*i+j;
 			html+='<div class="container">'
-			if(nums[num]!=0)
+			if(nums[i][j]!=0)
 			{
 				html+='<div class="top-left">'
-				html+=String(nums[num])
+				html+=String(nums[i][j])
 				html+="</div>";
 			}
 			
@@ -107,7 +107,7 @@ function createCrossword(data)
 			html+=String(i+1)
 			html+='" size="1" maxlength="1"'
 			
-			if(grid[num] == ".")
+			if(grid[i][j] == ".")
 			{
 				html+='class="black"'
 			}
@@ -135,8 +135,46 @@ function createCrossword(data)
 	down = data.clues.down;
 	
 	html+='<p id="clue"> </p>';
+	html += '</div>'
+
+	
+	// Create the HTML for the clues
+	let cluesHtml = '<div style="display: inline-block; vertical-align: top;">';
+	cluesHtml += '<div style="width: 300px; height: 200px; overflow-y: scroll; border: 1px solid black; padding: 10px;">';
+	cluesHtml += '<h3>Across</h3><ul>';
+	for (let key in across) {
+		cluesHtml += `<li>${key}. ${across[key]}</li>`;
+	}
+	cluesHtml += '</ul></div>';
+	
+	cluesHtml += '<div style="width: 300px; height: 200px; overflow-y: scroll; border: 1px solid black; padding: 10px;">';
+	cluesHtml += '<h3>Down</h3><ul>';
+	for (let key in down) {
+		cluesHtml += `<li>${key}. ${down[key]}</li>`;
+	}
+	cluesHtml += '</ul></div>';
+	
+	let clockHtml = '<div style="margin-top: 20px;">';
+	clockHtml += '<h3>Timer</h3>';
+	clockHtml += '<div id="clock" style="font-size: 20px;"></div>';
+	clockHtml += '</div>';
+	cluesHtml += clockHtml
+	cluesHtml += '</div>'; // Close the clue container
+
+	let startTime = Date.now();
+	function updateClock() {
+		let elapsed = Math.floor((Date.now() - startTime) / 1000);
+		let minutes = Math.floor(elapsed / 60);
+		let seconds = elapsed % 60;
+		// Format as MM:SS
+		document.getElementById('clock').innerText = `${minutes}:${seconds < 10 ? '0' + seconds : seconds}`;
+	}
 	
 	
+	// Update the clock every second
+	setInterval(updateClock, 1000);
+	
+	html += cluesHtml
 	document.body.innerHTML = html;
 }
 
